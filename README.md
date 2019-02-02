@@ -28,12 +28,14 @@
 2) Oque posso fazer:
   - uma vez com a classe instanciada, você pode manipular as parada.
   - Informações
+ 
   	*{{nome}} 		= nome de usuário do instagram - João Silva
 	*{{data}} 		= data da publicação - 02/02/2019
 	*{{link}} 		= link para a publicação
 	*{{likes}} 		= número de Likes da publicação
 	*{{img_perfil}} 		= link imagem de perfil do usuário 
 	*{{imagem}} = link da imagem da publicação - ``` exp: <img src="{{imagem}}" alt="{{nome}}" />```
+
    - Com essa informaçes, o céu é o limite!
   
    Exp:
