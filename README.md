@@ -5,11 +5,11 @@
 
 # USAGE
 1) HTML..
-
+<script type="text/html">
 <html>
 <head>
 	<title>Classe ES6 Instagram</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script type="text/javascript" src="js/instagram.js" charset="utf-8"></script>
 </head>
 <body>
@@ -22,11 +22,13 @@
 	</script>
 </body>
 </html>
+</script>
 
 2) Oque posso fazer:
   - uma vez com a classe instanciada, você pode manipular as parada.
   
    Exp:
+<script type="text/html">
 <script>
    var insta = new Instagra(TOKEN_INSTAGRAM);
 
@@ -42,9 +44,12 @@
     insta.go();
       // Irá renderizar no DOM
 </script>
+</script>
 
 3) EXTRA..
 
+<script type="text/html">
+<script>
   insta.getFetch;
     // Retorna os dados da ultima requisição
   
@@ -59,4 +64,5 @@
     
   insta.getMascara;
      // Retorna o HTML que irá ser renderizado os dados
-  
+</script>
+</script>
