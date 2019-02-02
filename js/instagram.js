@@ -1,5 +1,17 @@
 class InstagramRender {
 
+	/* Formato timestamp para Data */
+	time(timestamp){
+
+		let a = new Date(timestamp * 1000);
+		let months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+		let year = a.getFullYear();
+		let month = months[a.getMonth()];
+		let date = a.getDate();
+		let time = date + '/' + month + '/' + year;
+		return time;
+	}
+
 	/* Função responsavel por dar replace na mascaras */
 	replace(string, procurar, substituir){
 
@@ -33,6 +45,11 @@ class InstagramRender {
 		let imagem 		= '';
 		let nome 		= '';
 		let data 		= '';
+		let dataPublic	= '';
+		let imgProfile  = '';
+
+		this.fetch = fetch;
+
 		for(var x in fetch){
 
 			if(fetch[x].images){
@@ -43,9 +60,11 @@ class InstagramRender {
 				likes 	= data.likes.count;
 				imagem 	= data.images.low_resolution.url;
 				nome 	= data.user.full_name;
+				dataPublic = this.time(data.created_time);
+				imgProfile = data.user.profile_picture;
 
-				find = ["{{nome}}", "{{likes}}", "{{link}}", "{{imagem}}"];
-				replace = [nome, likes, link, imagem];
+				find = ["{{nome}}", "{{likes}}", "{{link}}", "{{imagem}}", "{{data}}", "{{img_perfil}}"];
+				replace = [nome, likes, link, imagem, dataPublic, imgProfile];
 
 				html += this.replace(this.mascara, find, replace);
 			}
@@ -81,6 +100,7 @@ class Instagram extends InstagramRender {
 			<div>
 				<div>Nome: {{nome}} </div>
 				<div>Likes: {{likes}}</div>
+				<div>Publicado: {{data}}</div>
 				<div><img src="{{imagem}}" alt="{{nome}}" /></div>
 				<div>URL: <a href="{{link}}">Abrir no instagram</a></div>
 				<br />
@@ -261,6 +281,8 @@ class Instagram extends InstagramRender {
 			let substituir 	= [this.access_token, this.count];
 
 			let newUrl = this.replace(this.url_api, procurar, substituir);
+
+			this.url_api = newUrl;
 
 			fetch(newUrl,{
 				method: 'get'
