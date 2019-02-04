@@ -34,7 +34,7 @@ class InstagramRender {
 		return string;
 	}
 
-	render(fetch){
+	async render(fetch){
 
 		let html 		= '';
 		let find 		= [];
@@ -47,6 +47,7 @@ class InstagramRender {
 		let data 		= '';
 		let dataPublic	= '';
 		let imgProfile  = '';
+		let commentsHTML = '';
 
 		this.fetch = fetch;
 
@@ -56,6 +57,18 @@ class InstagramRender {
 
 				data 	= fetch[x];
 
+				// Só irá fazer request dos comentários, se houve pelo menos 1 comentário
+				/*if(data.comments.count >= 1){
+					var coments = await this.requestComments(data.id);
+
+					for(var i in coments){
+
+						console.log(coments[i].id);
+						commentsHTML += '<p>' + coments[x].text +'</p>'; 
+						
+					}
+				}*/
+
 				link 	= data.link;
 				likes 	= data.likes.count;
 				imagem 	= data.images.low_resolution.url;
@@ -63,8 +76,8 @@ class InstagramRender {
 				dataPublic = this.time(data.created_time);
 				imgProfile = data.user.profile_picture;
 
-				find = ["{{nome}}", "{{likes}}", "{{link}}", "{{imagem}}", "{{data}}", "{{img_perfil}}"];
-				replace = [nome, likes, link, imagem, dataPublic, imgProfile];
+				find = ["{{nome}}", "{{likes}}", "{{link}}", "{{imagem}}", "{{data}}", "{{img_perfil}}", "{{commentarios}}"];
+				replace = [nome, likes, link, imagem, dataPublic, imgProfile, commentsHTML];
 
 				html += this.replace(this.mascara, find, replace);
 			}
@@ -102,6 +115,7 @@ class Instagram extends InstagramRender {
 				<div>Likes: {{likes}}</div>
 				<div>Publicado: {{data}}</div>
 				<div><img src="{{imagem}}" alt="{{nome}}" /></div>
+				<div>{{commentarios}}</div>
 				<div>URL: <a href="{{link}}">Abrir no instagram</a></div>
 				<br />
 				<hr />
@@ -282,14 +296,62 @@ class Instagram extends InstagramRender {
 
 			let newUrl = this.replace(this.url_api, procurar, substituir);
 
+			// Salva a nova URL no method
 			this.url_api = newUrl;
+			
+			// Faz o request para a URL
+			this._requestSend(newUrl);
+		}
+	}
 
-			fetch(newUrl,{
+	async requestComments(media_id){
+		this.url_api = 'https://api.instagram.com/v1/media/' + media_id + '/comments?access_token=' + this.access_token;
+
+		let newUrl = this.url_api;
+
+		let fetch = await this._fetch(newUrl);
+
+		// Retorna os comentarios
+		if(fetch.data){
+			return fetch.data;
+		}
+	}
+
+	async _requestSend(newUrl){
+
+		try	{
+
+			const fetch = await this._fetch(newUrl);
+
+			// Retorna as publicações
+			if(fetch.data){
+				return this.render(fetch.data);
+			}
+
+		} catch (e){
+
+			this.erro(e);
+		}
+	}
+
+	_fetch(newUrl){
+		
+		return new Promise((res, rej) => {
+
+			let fe = fetch(newUrl, {
 				method: 'get'
 			})
-			.then(response => response.json())
-			.then(json => this.render(json.data))
-			.catch(err => console.log(err));
-		}
+			.then( res => res.json())
+			.then(res => {
+				return res;
+			})
+			.catch( erro => {
+				this.erro('Ops, Error: '+ erro);
+			})
+
+
+			res(fe);
+		});
+
 	}
 }
